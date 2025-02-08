@@ -52,6 +52,14 @@ class FilmController extends Controller
         }
         return view('films.list', ["films" => $new_films, "title" => $title]);
     }
+
+    public function countFilms()
+    {
+        $title = "Peliculas disponibles";
+        $films = FilmController::readFilms();
+        return view("films.filmscounter", ["films" => count($films), "title" => $title]);
+    }
+
     /**
      * Lista TODAS las películas o filtra x año o categoría.
      */
