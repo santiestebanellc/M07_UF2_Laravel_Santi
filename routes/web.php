@@ -23,6 +23,10 @@ Route::middleware(['validate_url'])->group(function() {
     Route::post('filmin/createFilm', [FilmController::class, 'createFilm'])->name('createFilm');
 });
 
+Route::get('/img/{filename}', function ($filename) {
+    return response()->file(storage_path("app/public/img/{$filename}"));
+});
+
 Route::middleware('year')->group(function() {
     Route::group(['prefix'=>'filmout'], function(){
         // Routes included with prefix "filmout"
