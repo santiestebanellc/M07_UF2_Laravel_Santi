@@ -19,6 +19,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware(['validate_url'])->group(function() {
+    Route::post('filmin/createFilm', [FilmController::class, 'createFilm'])->name('createFilm');
+});
+
 Route::middleware('year')->group(function() {
     Route::group(['prefix'=>'filmout'], function(){
         // Routes included with prefix "filmout"
