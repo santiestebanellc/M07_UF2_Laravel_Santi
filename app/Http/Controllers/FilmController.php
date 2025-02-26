@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class FilmController extends Controller
 {
@@ -52,33 +53,103 @@ class FilmController extends Controller
         }
         return view('films.list', ["films" => $new_films, "title" => $title]);
     }
-    /**
-     * Lista TODAS las películas o filtra x año o categoría.
-     */
-    public function listFilms($year = null, $genre = null)
+
+    public function countFilms()
     {
-        $films_filtered = [];
-
-        $title = "Listado de todas las pelis";
+        $title = "Peliculas disponibles";
         $films = FilmController::readFilms();
-
-        //if year and genre are null
-        if (is_null($year) && is_null($genre))
-            return view('films.list', ["films" => $films, "title" => $title]);
-
-        //list based on year or genre informed
-        foreach ($films as $film) {
-            if ((!is_null($year) && is_null($genre)) && $film['year'] == $year){
-                $title = "Listado de todas las pelis filtrado x año";
-                $films_filtered[] = $film;
-            }else if((is_null($year) && !is_null($genre)) && strtolower($film['genre']) == strtolower($genre)){
-                $title = "Listado de todas las pelis filtrado x categoria";
-                $films_filtered[] = $film;
-            }else if(!is_null($year) && !is_null($genre) && strtolower($film['genre']) == strtolower($genre) && $film['year'] == $year){
-                $title = "Listado de todas las pelis filtrado x categoria y año";
-                $films_filtered[] = $film;
-            }
-        }
-        return view("films.list", ["films" => $films_filtered, "title" => $title]);
+        return view("films.filmscounter", ["films" => count($films), "title" => $title]);
     }
+
+    public function sortFilms()
+    {
+        $title = "Pelis ordenadas por año";
+        $films = FilmController::readFilms();
+        usort($films, function ($a, $b) {
+            return $a['year'] - $b['year'];
+        });
+        return view("films.list", ["films" => $films, "title" => $title]);
+    }
+
+    public function listFilmsByYear()
+{
+    $year = request()->input('year'); // Obtener el año desde el request
+    $films_filtered = [];
+
+    $title = "Listado de todas las pelis";
+    $films = FilmController::readFilms();
+
+    if (empty($year)) {
+        return view('films.list', ["films" => $films, "title" => $title]);
+    }
+
+    foreach ($films as $film) {
+        if ($film['year'] == $year) {
+            $title = "Listado de todas las pelis filtrado por año: $year";
+            $films_filtered[] = $film;
+        }
+    }
+
+    return view("films.list", ["films" => $films_filtered, "title" => $title]);
+}
+
+public function listFilmsByGenre()
+{
+    $genre = request()->input('genre'); // Obtener el género desde el request
+    $films_filtered = [];
+
+    $title = "Listado de todas las pelis";
+    $films = FilmController::readFilms();
+
+    if (empty($genre)) {
+        return view('films.list', ["films" => $films, "title" => $title]);
+    }
+
+    foreach ($films as $film) {
+        if (strtolower($film['genre']) == strtolower($genre)) {
+            $title = "Listado de todas las pelis filtrado por género: $genre";
+            $films_filtered[] = $film;
+        }
+    }
+
+    return view("films.list", ["films" => $films_filtered, "title" => $title]);
+}
+
+public function createFilm(Request $request)
+{
+    $films = self::readFilms();
+    $newFilm = [
+        'name' => $request->input('name'),
+        'year' => $request->input('year'),
+        'genre' => $request->input('genre'),
+        'country' => $request->input('country'),
+        'duration' => $request->input('duration'),
+        'img_url' => $request->input('img_url'),
+    ];
+
+    // Si la película ya existe, redirigir con error
+    if ($this->isFilm($newFilm['name'])) {
+        return redirect('/')->withErrors(['name' => 'La película ya existe']);
+    }
+
+    // Agregar la película y guardar en el JSON
+    $films[] = $newFilm;
+    file_put_contents(storage_path('app/public/films.json'), json_encode($films, JSON_PRETTY_PRINT));
+
+    return redirect('/filmout/sortFilms')->with('success', 'Película añadida correctamente');
+}
+
+public function isFilm($filmName)
+{
+    $films = self::readFilms();
+
+    foreach ($films as $film) {
+        if (strcasecmp($film['name'], $filmName) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 }
