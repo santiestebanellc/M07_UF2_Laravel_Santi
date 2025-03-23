@@ -74,34 +74,39 @@ class FilmController extends Controller
     public function sortFilms()
     {
         $title = "Pelis ordenadas por año";
-        $films = FilmController::readFilms();
-        usort($films, function ($a, $b) {
-            return $a['year'] - $b['year'];
-        });
-        return view("films.list", ["films" => $films, "title" => $title]);
+    
+        // Obtener películas desde la base de datos, ordenadas por año
+        $films = DB::table('film')->orderBy('year', 'asc')->get();
+    
+        // Convertir a array asociativo para la vista
+        $filmsArray = array_map(function ($film) {
+            return (array) $film;
+        }, $films->toArray());
+    
+        return view("films.list", ["films" => $filmsArray, "title" => $title]);
     }
 
     public function listFilmsByYear()
-{
-    $year = request()->input('year'); // Obtener el año desde el request
-    $films_filtered = [];
+    {
+        $year = request()->input('year'); // Obtener el año desde el request
+        $films_filtered = [];
 
-    $title = "Listado de todas las pelis";
-    $films = FilmController::readFilms();
+        $title = "Listado de todas las pelis";
+        $films = FilmController::readFilms();
 
-    if (empty($year)) {
-        return view('films.list', ["films" => $films, "title" => $title]);
-    }
-
-    foreach ($films as $film) {
-        if ($film['year'] == $year) {
-            $title = "Listado de todas las pelis filtrado por año: $year";
-            $films_filtered[] = $film;
+        if (empty($year)) {
+            return view('films.list', ["films" => $films, "title" => $title]);
         }
-    }
 
-    return view("films.list", ["films" => $films_filtered, "title" => $title]);
-}
+        foreach ($films as $film) {
+            if ($film['year'] == $year) {
+                $title = "Listado de todas las pelis filtrado por año: $year";
+                $films_filtered[] = $film;
+            }
+        }
+
+        return view("films.list", ["films" => $films_filtered, "title" => $title]);
+    }
 
 public function listFilmsByGenre()
 {
