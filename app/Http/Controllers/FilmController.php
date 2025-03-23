@@ -127,7 +127,8 @@ public function listFilmsByGenre()
 
 public function createFilm(Request $request)
 {
-    $films = self::readFilms();
+    $storageType = env('FILM_STORAGE', 'JSON'); // Leer la variable de entorno
+
     $newFilm = [
         'name' => $request->input('name'),
         'year' => $request->input('year'),
@@ -142,12 +143,19 @@ public function createFilm(Request $request)
         return redirect('/')->withErrors(['name' => 'La película ya existe']);
     }
 
-    // Agregar la película y guardar en el JSON
-    $films[] = $newFilm;
-    file_put_contents(storage_path('app/public/films.json'), json_encode($films, JSON_PRETTY_PRINT));
+    if ($storageType === 'DDBB') {
+        // Guardar en la base de datos
+        DB::table('film')->insert($newFilm);
+    } else {
+        // Guardar en el JSON
+        $films = self::readFilms();
+        $films[] = $newFilm;
+        file_put_contents(storage_path('app/public/films.json'), json_encode($films, JSON_PRETTY_PRINT));
+    }
 
     return redirect('/filmout/sortFilms')->with('success', 'Película añadida correctamente');
 }
+
 
 public function isFilm($filmName)
 {
