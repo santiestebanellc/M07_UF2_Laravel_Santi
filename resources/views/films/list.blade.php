@@ -9,7 +9,7 @@
         <p class="text-danger">No se ha encontrado ninguna película</p>
     @else
         <div align="center">
-        <table border="1">
+        <table>
             <tr>
                 <th>Nombre</th>
                 <th>Año</th>
