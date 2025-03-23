@@ -32,6 +32,12 @@ class ActorController extends Controller
         return view('actors.list', ["actors" => $actors, "title" => $title]);
     }
 
+    public function index()
+    {
+        $actors = DB::table('actor')->get();
+        return response()->json($actors);
+    }
+
     public function listActorsByDecade(Request $request)
     {
         $title = "Listado de Actores por Década";
