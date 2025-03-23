@@ -10,8 +10,6 @@ class ActorController extends Controller
 
     public static function readActors(): array {
 
-        
-        // Fetch all actors from the 'actors' table
         $actors = DB::table('actor')->get()->toArray();
 
         return $actors;
@@ -32,6 +30,26 @@ class ActorController extends Controller
         $actors = array_map(fn($actor) => (array) $actor, $actors);
 
         return view('actors.list', ["actors" => $actors, "title" => $title]);
+    }
+
+    public function listActorsByDecade(Request $request)
+    {
+        $title = "Listado de Actores por Década";
+        $query = DB::table('actor');
+
+        if ($request->has('decade')) {
+            $years = explode('-', $request->decade);
+            $startYear = (int) $years[0];
+            $endYear = (int) $years[1];
+
+            $query->whereYear('birthdate', '>=', $startYear)
+                ->whereYear('birthdate', '<=', $endYear);
+        }
+
+        $actors = $query->get()->toArray();
+        $actors = array_map(fn($actor) => (array) $actor, $actors);
+
+        return view('actors.list', ['actors' => $actors, 'title' => $title]);
     }
 
 
