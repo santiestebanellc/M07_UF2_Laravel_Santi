@@ -7,6 +7,6 @@
     @if(is_null($actors))
         <p class="text-danger">No hay actores disponibles.</p>
     @else
-        <p>Total de actores: {{$actores}}</p>
+        <p>Total de actores: {{$actors}}</p>
     @endif
 @endsection

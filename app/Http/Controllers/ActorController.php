@@ -12,7 +12,7 @@ class ActorController extends Controller
 
         
         // Fetch all actors from the 'actors' table
-        $actors = DB::table('actors')->get()->toArray();
+        $actors = DB::table('actor')->get()->toArray();
 
         return $actors;
     }
