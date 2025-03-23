@@ -52,6 +52,7 @@
     <h1 class="mt-4">Lista de Actores</h1>
     <ul>
         <li><a href="/actorout/countActors">Contador actores</a></li>
+        <li><a href="/actorout/actors">Lista de actores</a></li>
     </ul>
 @endsection
 

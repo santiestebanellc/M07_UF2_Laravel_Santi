@@ -24,4 +24,16 @@ class ActorController extends Controller
         return view("actors.actorscounter", ["actors" => count($actors), "title" => $title]);
     }
 
+    public static function listActors()
+    {
+        $title = "Listado de todos los Actores";
+        $actors = ActorController::readActors();
+
+        $actors = array_map(fn($actor) => (array) $actor, $actors);
+
+        return view('actors.list', ["actors" => $actors, "title" => $title]);
+    }
+
+
+
 }
