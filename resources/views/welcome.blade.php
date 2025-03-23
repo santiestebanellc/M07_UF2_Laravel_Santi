@@ -48,6 +48,29 @@
 
         <button type="submit">Enviar</button>
     </form>
+
+    <h1 class="mt-4">Lista de Actores</h1>
+    <ul>
+        <li><a href="/actorout/countActors">Contador actores</a></li>
+        <li><a href="/actorout/actors">Lista de actores</a></li>
+    </ul>
+
+    <h2>Buscar Actores por Década de Nacimiento</h2>
+    <form action="{{ route('listActorsByDecade') }}" method="GET">
+        <div class="form-group">
+            <label for="decade">Selecciona una Década:</label>
+            <select name="decade" id="decade" class="form-control">
+                <option value="1980-1989">1980-1989</option>
+                <option value="1990-1999">1990-1999</option>
+                <option value="2000-2009">2000-2009</option>
+                <option value="2010-2019">2010-2019</option>
+                <option value="2020-2029">2020-2029</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+
 @endsection
 
 @section('scripts')
