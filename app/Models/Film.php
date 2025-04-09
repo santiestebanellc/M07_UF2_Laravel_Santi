@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Film extends Model
 {
-    protected $table = 'film'; // Nombre de la tabla en la base de datos
+    protected $table = 'film';
 
     protected $fillable = [
         'name',
@@ -17,5 +17,12 @@ class Film extends Model
         'img_url',
     ];
 
-    public $timestamps = true; // Habilitar timestamps (created_at y updated_at)
+    public $timestamps = true;
+
+    // Relación muchos a muchos con Actor
+    public function actors()
+    {
+        return $this->belongsToMany(Actor::class, 'actor_film', 'film_id', 'actor_id')
+                    ->withTimestamps();
+    }
 }
