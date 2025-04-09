@@ -39,11 +39,14 @@ class ActorController extends Controller
     }
 
     /**
-     * Return actors as JSON
+     * Return actors as JSON with films
      */
     public function index()
     {
-        $actors = Actor::all(); // Usar Eloquent
+        // Obtener todos los actores con sus películas usando Eloquent
+        $actors = Actor::with('films')->get();
+
+        // Devolver la respuesta en formato JSON
         return response()->json($actors);
     }
 
