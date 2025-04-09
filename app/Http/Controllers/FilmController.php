@@ -155,6 +155,22 @@ class FilmController extends Controller
         return redirect('/filmout/sortFilms')->with('success', 'Película añadida correctamente');
     }
 
+    public function index()
+    {
+        // Obtener todas las películas con sus actores usando Eloquent
+        $filmsFromDB = Film::with('actors')->get();
+
+        // Obtener las películas del JSON (si las hay)
+        $filmsFromJson = json_decode(Storage::get('public/films.json'), true) ?? [];
+
+        // Combinar las películas del JSON con las de la base de datos
+        $films = $filmsFromDB->toArray();
+        $allFilms = array_merge($filmsFromJson, $films);
+
+        // Devolver la respuesta en formato JSON
+        return response()->json($allFilms);
+    }
+
     /**
      * Check if a film exists by name
      */
